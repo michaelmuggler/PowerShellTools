@@ -13,6 +13,9 @@ function List-GitRepos {
     .PARAMETER SearchDirectory
     The directory where the search for Git repositories will be conducted. If not specified, the current working directory will be used by default.
 
+    .PARAMETER FullPath
+    If this flag is passed, the function will return the absolute path of the folder instead of just the folder name.
+
     .EXAMPLE
     List-GitRepos -SearchDirectory "C:\path\to\your\projects"
 
@@ -24,7 +27,8 @@ function List-GitRepos {
     This will list all Git repositories in the current working directory and show their status.
     #>
     param (
-        [string]$SearchDirectory = (Get-Location)
+        [string]$SearchDirectory = (Get-Location),
+        [switch]$FullPath
     )
 
     # Create an array to hold the repo info objects
@@ -37,22 +41,19 @@ function List-GitRepos {
     foreach ($folder in $folders) {
         # Check if the folder contains a .git directory
         if (Test-Path "$($folder.FullName)\.git") {
-            # Change to the folder's directory
-            Set-Location -Path $folder.FullName
-
             # Get the current branch name
-            $branch = git rev-parse --abbrev-ref HEAD
+            $branch = git -C $folder.FullName rev-parse --abbrev-ref HEAD
 
             # Get the last commit hash (first 7 characters)
-            $commitHash = git log -1 --format="%H" | Select-Object -First 1
+            $commitHash = git -C $folder.FullName log -1 --format="%H" | Select-Object -First 1
             $commitHash = $commitHash.Substring(0, 7)
 
             # Get the last commit date and time in a human-readable format
-            $commitDate = git log -1 --format="%cd" --date=format-local:"%Y-%m-%d %H:%M:%S"
+            $commitDate = git -C $folder.FullName log -1 --format="%cd" --date=format-local:"%Y-%m-%d %H:%M:%S"
 
             # Create a custom object to store the data
             $repoInfo = [PSCustomObject]@{
-                FolderName      = $folder.Name
+                Name            = if ($FullPath) { $folder.FullName } else { $folder.Name }
                 Branch          = $branch
                 LastCommitHash  = $commitHash
                 LastCommitDate  = $commitDate
@@ -64,5 +65,5 @@ function List-GitRepos {
     }
 
     # Return the collected information as a table
-    return $repoInfoList | Format-Table -Property FolderName, Branch, LastCommitHash, LastCommitDate
+    return $repoInfoList | Format-Table -Property Name, Branch, LastCommitHash, LastCommitDate
 }
