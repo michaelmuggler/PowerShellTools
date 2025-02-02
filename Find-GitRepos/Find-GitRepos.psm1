@@ -1,4 +1,4 @@
-function List-GitRepos {
+function Find-GitRepos {
     <#
     .SYNOPSIS
     Lists Git repositories in a specified directory (or current working directory), showing their current branch, last commit hash and date.
@@ -13,22 +13,22 @@ function List-GitRepos {
     .PARAMETER SearchDirectory
     The directory where the search for Git repositories will be conducted. If not specified, the current working directory will be used by default.
 
-    .PARAMETER FullPath
+    .PARAMETER FullName
     If this flag is passed, the function will return the absolute path of the folder instead of just the folder name.
 
     .EXAMPLE
-    List-GitRepos -SearchDirectory "C:\path\to\your\projects"
+    Find-GitRepos -SearchDirectory "C:\path\to\your\projects"
 
     This will list all Git repositories in the specified directory and show their status.
 
     .EXAMPLE
-    List-GitRepos
+    Find-GitRepos
 
     This will list all Git repositories in the current working directory and show their status.
     #>
     param (
         [string]$SearchDirectory = (Get-Location),
-        [switch]$FullPath
+        [switch]$FullName
     )
 
     # Create an array to hold the repo info objects
@@ -53,7 +53,7 @@ function List-GitRepos {
 
             # Create a custom object to store the data
             $repoInfo = [PSCustomObject]@{
-                Name            = if ($FullPath) { $folder.FullName } else { $folder.Name }
+                Name            = if ($FullName) { $folder.FullName } else { $folder.Name }
                 Branch          = $branch
                 LastCommitHash  = $commitHash
                 LastCommitDate  = $commitDate
@@ -65,5 +65,5 @@ function List-GitRepos {
     }
 
     # Return the collected information as a table
-    return $repoInfoList | Format-Table -Property Name, Branch, LastCommitHash, LastCommitDate
+    return $repoInfoList
 }
