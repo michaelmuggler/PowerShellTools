@@ -4,14 +4,15 @@ function Get-Color {
     )
 
     $colors = @(
-        "#FF5733",  # Red
-        "#33FF57",  # Green
-        "#3357FF",  # Blue
-        "#FF33A8",  # Pink
-        "#33FFF5",  # Cyan
-        "#FFC433",  # Yellow
-        "#8E35FF",  # Purple
-        "#FF8633"   # Orange
+        "#991e3b",
+        "#ef476f",
+        "#f78c6b",
+        "#ffd166",
+        "#06d6a0",
+        "#0cb0a9",
+        "#118ab2",
+        "#0c637f",
+        "#073b4c"
     )
 
     $hashCode = [Math]::Abs([System.Math]::Abs($title.GetHashCode()) % $colors.Count)
