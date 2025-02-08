@@ -1,31 +1,31 @@
+<#
+.SYNOPSIS
+Lists Git repositories in a specified directory (or current working directory), showing their current branch, last commit hash and date.
+
+.DESCRIPTION
+For each folder in the specified directory, if it is a Git repository (`.git` directory exists), it will output the following info:
+- Folder name
+- Current Git branch
+- Last commit hash (first 7 characters)
+- Last commit date in a human-readable format
+
+.PARAMETER SearchDirectory
+The directory where the search for Git repositories will be conducted. If not specified, the current working directory will be used by default.
+
+.PARAMETER FullName
+If this flag is passed, the function will return the absolute path of the folder instead of just the folder name.
+
+.EXAMPLE
+Find-GitRepos -SearchDirectory "C:\path\to\your\projects"
+
+This will list all Git repositories in the specified directory and show their status.
+
+.EXAMPLE
+Find-GitRepos
+
+This will list all Git repositories in the current working directory and show their status.
+#>
 function Find-GitRepos {
-    <#
-    .SYNOPSIS
-    Lists Git repositories in a specified directory (or current working directory), showing their current branch, last commit hash and date.
-
-    .DESCRIPTION
-    For each folder in the specified directory, if it is a Git repository (`.git` directory exists), it will output the following info:
-    - Folder name
-    - Current Git branch
-    - Last commit hash (first 7 characters)
-    - Last commit date in a human-readable format
-
-    .PARAMETER SearchDirectory
-    The directory where the search for Git repositories will be conducted. If not specified, the current working directory will be used by default.
-
-    .PARAMETER FullName
-    If this flag is passed, the function will return the absolute path of the folder instead of just the folder name.
-
-    .EXAMPLE
-    Find-GitRepos -SearchDirectory "C:\path\to\your\projects"
-
-    This will list all Git repositories in the specified directory and show their status.
-
-    .EXAMPLE
-    Find-GitRepos
-
-    This will list all Git repositories in the current working directory and show their status.
-    #>
     param (
         [string]$SearchDirectory = (Get-Location),
         [switch]$FullName
