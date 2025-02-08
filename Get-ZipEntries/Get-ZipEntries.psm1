@@ -48,7 +48,7 @@ function Get-ZipEntries {
                 foreach ($entry in $zip.Entries) {
                     [PSCustomObject]@{
                         ZipFile  = (Split-Path -Leaf $path)
-                        FileName = $entry.FullName
+                        Entry = $entry.FullName
                     }
                 }
                 $zip.Dispose()
