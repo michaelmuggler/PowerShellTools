@@ -1,5 +1,24 @@
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
+function Convert-BytesToHumanReadable {
+    param (
+        [Parameter(Mandatory = $true)]
+        [long]$Bytes
+    )
+    
+    $units = @("Bytes", "KB", "MB", "GB", "TB", "PB")
+    $unitIndex = 0
+    $size = $Bytes
+
+    while ($size -ge 1024 -and $unitIndex -lt $units.Length - 1) {
+        $size /= 1024
+        $unitIndex++
+    }
+
+    return "{0:N2} {1}" -f $size, $units[$unitIndex]
+}
+
+
 <#
 .SYNOPSIS
 Retrieves the list of files inside one or more zip archives.
@@ -58,6 +77,7 @@ function Get-ZipEntries {
                     [PSCustomObject]@{
                         ZipFile  = (Split-Path -Leaf $path)
                         Entry = $entry.FullName
+                        Length = Convert-BytesToHumanReadable -Bytes $entry.CompressedLength
                     }
                 }
                 $zip.Dispose()
@@ -67,3 +87,5 @@ function Get-ZipEntries {
         }
     }
 }
+
+Export-ModuleMember -Function Get-ZipEntries
