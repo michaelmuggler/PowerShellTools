@@ -13,6 +13,9 @@ Wildcards are supported.
 .PARAMETER Paths
 One or more file paths to ZIP archives. Wildcards are supported.
 
+.PARAMETER Filter
+A regular expression to filter the entries by.
+
 .EXAMPLE
 Get-ZipEntries -Paths "C:\Downloads\archive.zip", "C:\Documents\*.zip"
 Retrieves the list of files inside "archive.zip" and any zip inside "C:\Documents".
@@ -27,7 +30,10 @@ Uses System.IO.Compression.FileSystem assembly from .NET.
 function Get-ZipEntries {
     param (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [string[]]$Paths
+        [string[]]$Paths,
+
+        [Parameter()]
+        [string]$Filter
     )
     
     process {
@@ -46,6 +52,9 @@ function Get-ZipEntries {
             try {
                 $zip = [System.IO.Compression.ZipFile]::OpenRead((Get-Item $path).FullName)
                 foreach ($entry in $zip.Entries) {
+                    if ($Filter -and $entry.Name -notmatch $Filter) {
+                        continue
+                    }
                     [PSCustomObject]@{
                         ZipFile  = (Split-Path -Leaf $path)
                         Entry = $entry.FullName
